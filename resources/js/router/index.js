@@ -2,12 +2,24 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import Dashboard from '../pages/Dashboard.vue';
 import Users from '../pages/Users.vue';
+import Login from '../pages/Login.vue';
 import AdminLayout from '../layouts/AdminLayout.vue';
 
 const routes = [
+
+    // LOGIN PAGE — NO ADMIN LAYOUT
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: { guest: true, title: "Login" }
+    },
+
+    // ADMIN LAYOUT — SIDEBAR + TOPBAR INSIDE
     {
         path: '/',
         component: AdminLayout,
+        meta: { requiresAuth: true },
         children: [
             { 
                 path: '', 
@@ -22,7 +34,7 @@ const routes = [
                 meta: { title: "Users | Admin Panel" }
             },
         ]
-    }
+    },
 ];
 
 const router = createRouter({
@@ -30,13 +42,9 @@ const router = createRouter({
     routes,
 });
 
-// 🟦 Title Change Logic (IMPORTANT)
+// TITLE CHANGE LOGIC
 router.afterEach((to) => {
-    if (to.meta.title) {
-        document.title = to.meta.title;
-    } else {
-        document.title = "Admin Panel";
-    }
+    document.title = to.meta.title || "Admin Panel";
 });
 
 export default router;

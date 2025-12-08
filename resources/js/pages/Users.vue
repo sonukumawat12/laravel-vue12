@@ -361,6 +361,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from "axios";
+import api from "@/plugins/axios";
 
 const router = useRouter();
 const addUserDialog = ref(false);
@@ -601,13 +603,26 @@ const convertToLead = () => {
   }, 1000);
 };
 
-const saveNewUser = () => {
-  if (formValid.value) {
-  
-    users.value.push(newUserData);
+const saveNewUser = async () => {
+  if (!formValid.value) return;
+
+  try {
+    const res = await api.post("/register", {
+      name: `${newUser.value.firstName} ${newUser.value.lastName}`,
+      email: newUser.value.email,
+      phone: newUser.value.phone,
+      password: "12345678", // temp password
+    });
+
+    users.value.push(res.data.data.user);
     closeAddUserDialog();
+    console.log("User created:", res.data);
+
+  } catch (error) {
+    console.error("Registration error:", error.response?.data || error);
   }
 };
+
 </script>
 
 <style scoped>
