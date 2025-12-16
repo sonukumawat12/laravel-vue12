@@ -244,8 +244,8 @@
                   ></v-img>
                 </v-avatar>
                 <div>
-                  <div class="text-subtitle-1 text-white">John Doe</div>
-                  <div class="text-caption text-white text-opacity-90">john.doe@example.com</div>
+                  <div class="text-subtitle-1 text-white">{{ user.name }}</div>
+                  <div class="text-caption text-white text-opacity-90">{{ user.email }}</div>
                 </div>
               </div>
             </v-card-item>
@@ -280,6 +280,7 @@
                 prepend-icon="mdi-logout"
                 title="Logout"
                 class="text-error"
+                @click="logout"
               ></v-list-item>
             </v-list>
           </v-card>
@@ -290,15 +291,31 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+  import { ref, inject } from 'vue';
+  import { useUserStore } from '@/stores/user';
+  import { useRouter } from 'vue-router';
+  
+  const router = useRouter();
+  const search = ref('');
+  const drawer = inject('sidebarDrawer', ref(true));
+  
+  const toggleSidebar = () => {
+    drawer.value = !drawer.value;
+  };
+  
+  // 🟢 USER STORE
+  const store = useUserStore();
+  store.loadUserFromStorage(); // refresh on reload
+  
+  const user = store.user; // reactive
 
-const search = ref('');
-const drawer = inject('sidebarDrawer', ref(true));
+  const logout = () => {
+    store.logout();
+    router.push('/login');
+}
 
-const toggleSidebar = () => {
-  drawer.value = !drawer.value;
-};
-</script>
+  </script>
+  
 
 <style scoped>
 .topbar {

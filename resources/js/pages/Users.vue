@@ -407,131 +407,26 @@ const selectAll = ref(false);
 const selectedUsers = ref([]);
 
 // Dummy users data
-const users = ref([
-  {
-    id: 1,
-    name: 'Kathryn Murphy',
-    email: 'osgoodwy@gmail.com',
-    department: 'HR',
-    designation: 'Manager',
-    status: 'Active',
-    joinDate: '25 Jan 2024',
-    avatar: 'https://randomuser.me/api/portraits/women/1.jpg'
-  },
-  {
-    id: 2,
-    name: 'Annette Black',
-    email: 'redaniel@gmail.com',
-    department: 'Design',
-    designation: 'UI UX Designer',
-    status: 'Inactive',
-    joinDate: '25 Jan 2024',
-    avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
-  },
-  {
-    id: 3,
-    name: 'Ronald Richards',
-    email: 'seannand@mail.ru',
-    department: 'Design',
-    designation: 'UI UX Designer',
-    status: 'Active',
-    joinDate: '10 Feb 2024',
-    avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
-  },
-  {
-    id: 4,
-    name: 'Eleanor Pena',
-    email: 'miyokoto@mail.ru',
-    department: 'Design',
-    designation: 'UI UX Designer',
-    status: 'Active',
-    joinDate: '10 Feb 2024',
-    avatar: 'https://randomuser.me/api/portraits/women/3.jpg'
-  },
-  {
-    id: 5,
-    name: 'Leslie Alexander',
-    email: 'icadahli@gmail.com',
-    department: 'Design',
-    designation: 'UI UX Designer',
-    status: 'Inactive',
-    joinDate: '15 March 2024',
-    avatar: 'https://randomuser.me/api/portraits/women/4.jpg'
-  },
-  {
-    id: 6,
-    name: 'Robert Fox',
-    email: 'robertfox@example.com',
-    department: 'Development',
-    designation: 'Senior Developer',
-    status: 'Active',
-    joinDate: '20 March 2024',
-    avatar: 'https://randomuser.me/api/portraits/men/2.jpg'
-  },
-  {
-    id: 7,
-    name: 'Jane Cooper',
-    email: 'janecooper@example.com',
-    department: 'Marketing',
-    designation: 'Marketing Manager',
-    status: 'Active',
-    joinDate: '05 April 2024',
-    avatar: 'https://randomuser.me/api/portraits/women/5.jpg'
-  },
-  {
-    id: 8,
-    name: 'Wade Warren',
-    email: 'wadewarren@example.com',
-    department: 'Sales',
-    designation: 'Sales Executive',
-    status: 'Inactive',
-    joinDate: '12 April 2024',
-    avatar: 'https://randomuser.me/api/portraits/men/3.jpg'
-  },
-  {
-    id: 9,
-    name: 'Kristin Watson',
-    email: 'kristinwatson@example.com',
-    department: 'HR',
-    designation: 'HR Executive',
-    status: 'Active',
-    joinDate: '18 April 2024',
-    avatar: 'https://randomuser.me/api/portraits/women/6.jpg'
-  },
-  {
-    id: 10,
-    name: 'Cameron Williamson',
-    email: 'cameronwilliamson@example.com',
-    department: 'Development',
-    designation: 'Frontend Developer',
-    status: 'Active',
-    joinDate: '25 April 2024',
-    avatar: 'https://randomuser.me/api/portraits/men/4.jpg'
+const users = ref([]);
+
+const fetchUsers = async () => {
+  loading.value = true
+
+  try {
+    const response = await axios.get('/api/v1/users', {
+      params: {
+        search: search.value,
+        status: statusFilter.value !== 'All' ? statusFilter.value : null
+      }
+    })
+
+    users.value = response.data.data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
   }
-]);
-
-// Filtered users based on search and status
-const filteredUsers = computed(() => {
-  let result = users.value;
-
-  // Filter by search
-  if (search.value) {
-    const searchLower = search.value.toLowerCase();
-    result = result.filter(user =>
-      user.name.toLowerCase().includes(searchLower) ||
-      user.email.toLowerCase().includes(searchLower) ||
-      user.department.toLowerCase().includes(searchLower) ||
-      user.designation.toLowerCase().includes(searchLower)
-    );
-  }
-
-  // Filter by status
-  if (statusFilter.value !== 'All') {
-    result = result.filter(user => user.status === statusFilter.value);
-  }
-
-  return result;
-});
+}
 
 // Methods
 const viewUser = (user) => {
